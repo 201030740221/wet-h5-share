@@ -55,7 +55,7 @@ var ActivityPage = React.createClass({
         this.setState({
             mask: true
         })
-        let _video_node = '<video controls="controls" autoplay="autoplay" poster='+videoPreImg+'><source src='+videoSrc+' type="video/mp4"></video>';
+        let _video_node = '<video id="example_video_1" class="video-js vjs-default-skin" controls preload="none" poster='+videoPreImg+' data-setup="{}"><source src='+videoSrc+' type="video/mp4" /></video>';
         $('#mask_video').append(_video_node);
     },
 

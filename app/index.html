@@ -20,11 +20,20 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Cache-Control" content="no-cache">
     <meta http-equiv="Expires" content="0">
+    <link rel="stylesheet" type="text/css" href="css/video.css">
     <title>欧巴来看我直播</title>
 </head>
 <body>
     <div id="app-root"></div>
     <script type="text/javascript" src="share.js" charset="utf-8"></script>
     <script type="text/javascript" src="views/runApp.js"></script>
+    <script type="text/javascript" src="video.js"></script>
+    <script type="text/javascript">
+        var myPlayer = videojs('example_video_1');
+        videojs("example_video_1").ready(function(){
+            var myPlayer = this;
+            myPlayer.play();
+        });
+    </script>
 </body>
 </html>

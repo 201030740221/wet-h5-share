@@ -51,14 +51,31 @@ var ActivityPage = React.createClass({
             this.getActivityData(2);
         }
     },
+    launchFullScreen(element) {
+      if(element.requestFullScreen) {
+        element.requestFullScreen();
+      } else if(element.mozRequestFullScreen) {
+        element.mozRequestFullScreen();
+      } else if(element.webkitRequestFullScreen) {
+        element.webkitRequestFullScreen();
+      }
+    },
     videoShow(videoSrc,videoPreImg){
+        let self = this;
         this.setState({
             mask: true
         })
+        this.launchFullScreen(document.getElementById("mask_box")); // 某个页面元素
         let _width = document.body.clientWidth ;
         let _height = document.body.clientHeight; 
         let _video_node = '<video class="video_content" controls="controls" autoplay="autoplay" width='+_width+'  height='+_height+'  poster='+videoPreImg+'><source src='+videoSrc+' type="video/mp4" /></video>';
         $('#mask_video').append(_video_node);
+
+        let media = $('#mask_video Video');
+        console.log(media);
+        if(media.ended){
+            self.maskHandle();
+        }
     },
 
     componentDidUpdate(){
@@ -144,7 +161,7 @@ var ActivityPage = React.createClass({
                     }
                     </div>
                 </div>
-                <div className={this.state.mask?"mask shown":"mask hidden"} onClick={self.maskHandle}>
+                <div id="mask_box" className={this.state.mask?"mask shown":"mask hidden"} onClick={self.maskHandle}>
                     <div id="mask_video" className="mask_video">
                        
                     </div>

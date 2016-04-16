@@ -57,7 +57,7 @@ var ActivityPage = React.createClass({
         })
         let _width = document.body.clientWidth ;
         let _height = document.body.clientHeight; 
-        let _video_node = '<video class="video_content" width='+_width+'  height='+_height+' autoPlay  poster='+videoPreImg+'><source src='+videoSrc+' type="video/mp4" /></video>';
+        let _video_node = '<video class="video_content" controls="controls" autoplay="autoplay" width='+_width+'  height='+_height+'  poster='+videoPreImg+'><source src='+videoSrc+' type="video/mp4" /></video>';
         $('#mask_video').append(_video_node);
     },
 

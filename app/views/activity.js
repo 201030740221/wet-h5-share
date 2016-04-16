@@ -26,7 +26,7 @@ var ActivityPage = React.createClass({
 
 		$.ajax({
 	        dataType: 'json',
-            data: {id:1,type:_type},
+            data: {id:_id,type:_type},
 	        url: 'http://hd.wecut.com/api/starlive/list.php',
 	        success: function(res){
 
@@ -46,10 +46,20 @@ var ActivityPage = React.createClass({
             mask: false,
             videoPreImg: null,
             videoUrl: null,
+            botton_icon: false
         };
     },
     componentDidMount: function () {
        this.getActivityData(2);
+       if(platform() == 'iOS'){
+            this.setState({
+                botton_icon: false
+            })
+        }else if (platform() == 'Android') {
+            this.setState({
+                botton_icon: true
+            })
+        }
     },
     navHandle(type){
         if(type=='new'){
@@ -91,9 +101,6 @@ var ActivityPage = React.createClass({
         }
     },
 
-    componentDidUpdate(){
-
-    },
     maskHandle(){
         this.setState({
             mask: false
@@ -162,6 +169,7 @@ var ActivityPage = React.createClass({
                                             >
                                             <source src={item.mediaurl} type="video/mp4" />
                                         </Video>
+
                                     </div>
                                 )
                             }else{

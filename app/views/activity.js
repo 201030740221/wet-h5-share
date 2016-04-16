@@ -53,10 +53,10 @@ var ActivityPage = React.createClass({
     },
     videoShow(videoSrc,videoPreImg){
         this.setState({
-            mask: true,
-            videoUrl: videoSrc,
-            videoPreImg: videoPreImg
+            mask: true
         })
+        let _video_node = '<video controls="controls" autoplay="autoplay" poster='+videoPreImg+'><source src='+videoSrc+' type="video/mp4"></video>';
+        $('#mask_video').append(_video_node);
     },
 
     componentDidUpdate(){
@@ -66,6 +66,7 @@ var ActivityPage = React.createClass({
         this.setState({
             mask: false
         })
+        $('#mask_video').empty();
     },
 
     render: function () {
@@ -142,16 +143,8 @@ var ActivityPage = React.createClass({
                     </div>
                 </div>
                 <div className={this.state.mask?"mask shown":"mask hidden"} onClick={self.maskHandle}>
-                    <div className="mask_video">
-                        <Video 
-                            className="video_content" 
-                            style={{width:'100%'}}
-                            controls
-                            autoPlay  
-                            poster={this.state.videoPreImg}
-                            >
-                            <source src={this.state.videoUrl}  type="video/mp4" />
-                        </Video>
+                    <div id="mask_video" className="mask_video">
+                       
                     </div>
                 </div>
 		    </div>

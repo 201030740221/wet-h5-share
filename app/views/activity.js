@@ -133,7 +133,7 @@ var ActivityPage = React.createClass({
 		                - 打开WECUT，点击“欧巴来看我直播”封面
 		            </p>
 		            <p className="activity_dec">
-		                即可拍出你和{source.star.name}的直播小视频啦!
+		                即可拍出你和   {source.star.name}  的直播小视频啦!
 		            </p>
 		        </div>
 		        <div className="">

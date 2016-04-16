@@ -26,7 +26,7 @@ var ActivityPage = React.createClass({
 
 		$.ajax({
 	        dataType: 'json',
-            data: {id:_id,type:_type},
+            data: {id:1,type:_type},
 	        url: 'http://hd.wecut.com/api/starlive/list.php',
 	        success: function(res){
 
@@ -133,7 +133,7 @@ var ActivityPage = React.createClass({
 		                - 打开WECUT，点击“欧巴来看我直播”封面
 		            </p>
 		            <p className="activity_dec">
-		                即可拍出你和Bigbang的直播小视频啦!
+		                即可拍出你和{source.star.name}的直播小视频啦!
 		            </p>
 		        </div>
 		        <div className="">
@@ -153,7 +153,7 @@ var ActivityPage = React.createClass({
                             let _node = '';
                             if(key==0&&type==2){
                                 _node = (
-                                    <div className="video_section" >
+                                    <div className="video_section" onClick={self.videoShow.bind(null,item.mediaurl,item.image)}>
                                         <Video 
                                             className="video_content" 
                                             style={{width:'100%'}}

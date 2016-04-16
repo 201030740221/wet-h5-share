@@ -65,7 +65,7 @@ var ActivityPage = React.createClass({
             this.getActivityData(2);
         }
     },
-    launchFullScreen(element) {
+    /*launchFullScreen(element) {
       if(element.requestFullScreen) {
         element.requestFullScreen();
       } else if(element.mozRequestFullScreen) {
@@ -73,13 +73,12 @@ var ActivityPage = React.createClass({
       } else if(element.webkitRequestFullScreen) {
         element.webkitRequestFullScreen();
       }
-    },
+    },*/
     videoShow(videoSrc,videoPreImg){
         let self = this;
         this.setState({
             mask: true
         })
-        this.launchFullScreen(document.getElementById("mask_box")); // 某个页面元素
         let _width = document.body.clientWidth ;
         let _height = document.body.clientHeight; 
         let _video_node = '<video class="video_content" controls="controls" autoplay="autoplay" width='+_width+'  height='+_height+'  poster='+videoPreImg+'><source src='+videoSrc+' type="video/mp4" /></video>';
@@ -110,7 +109,7 @@ var ActivityPage = React.createClass({
     				<p>正在加载中，请稍等片刻哦...</p>
     			)
     	}
-    	let source = this.state.source;
+    	let source = this.state.source || {};
         source.start = source.start || {};
         let video = source.video || [];
     	console.log(source);
@@ -138,7 +137,7 @@ var ActivityPage = React.createClass({
 		            </p>
 		        </div>
 		        <div className="">
-                    <div className="nav_section">
+                    <div className="nav_section hidden">
                         <div className="fl nav_li" onClick={this.navHandle.bind(null,'new')}>
                             <div className={type==1?"title active":"title"}>最新</div>
                         </div>
@@ -154,7 +153,7 @@ var ActivityPage = React.createClass({
                             let _node = '';
                             if(key==0&&type==2){
                                 _node = (
-                                    <div className="video_section" onClick={self.videoShow.bind(null,item.mediaurl,item.image)}>
+                                    <div className="video_section" >
                                         <Video 
                                             className="video_content" 
                                             style={{width:'100%'}}
@@ -167,7 +166,7 @@ var ActivityPage = React.createClass({
                                 )
                             }else{
                                 _node = (
-                                    <img className="img_list" src={item.image} alt="" key={key} onClick={self.videoShow.bind(null,item.mediaurl,item.image)} />
+                                    <img className="img_list hidden" src={item.image} alt="" key={key} onClick={self.videoShow.bind(null,item.mediaurl,item.image)} />
                                 )
                             }
                             return _node

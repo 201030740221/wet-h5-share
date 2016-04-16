@@ -5,14 +5,28 @@ var ActivityPage = React.createClass({
 	contextTypes: {
 		router: React.PropTypes.object.isRequired
 	},
+    GetRequest() { 
+        var url = location.search; //获取url中"?"符后的字串 
+        var theRequest = new Object(); 
+        if (url.indexOf("?") != -1) { 
+            var str = url.substr(1); 
+            strs = str.split("&"); 
+            for(var i = 0; i < strs.length; i ++) { 
+            theRequest[strs[i].split("=")[0]]=unescape(strs[i].split("=")[1]); 
+            } 
+        } 
+        return theRequest; 
+    },
 	/*请求数据*/
 	getActivityData(_type){
 
 		let self = this;
+        let _id_data = this.GetRequest();
+        let _id = _id_data['id'];
 
 		$.ajax({
 	        dataType: 'json',
-            data: {id:1,type:_type},
+            data: {id:_id,type:_type},
 	        url: 'http://hd.wecut.com/api/starlive/list.php',
 	        success: function(res){
 

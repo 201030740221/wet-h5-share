@@ -1,85 +1,71 @@
 import {Router, Route, IndexRoute, useRouterHistory} from 'react-router';
-var moment = require('moment');
-import CountDown from '../components/count-down.js'
-
-
-var CountDownContent = React.createClass({
-    render: function(){
-        var timeTitle = '离截至时间：';
-        if(this.props.isworking){
-            timeTitle = '距离结束时间：';
-        }
-        if(this.props.days === 0 && this.props.hours === 0 && this.props.minutes === 0 && this.props.seconds === 0){
-            return (
-                <div className="flashsale-countdown time_data"><span className="time_title">{timeTitle}</span><em>加载中...</em> </div>
-            );
-        } else{
-            return (
-                <div className="flashsale-countdown time_data"><span className="time_title">{timeTitle}</span><em>{this.props.days + "天 " + this.props.hours + ":" + this.props.minutes + ":" + this.props.seconds}</em> </div>
-            );
-        }
-
-    }
-});
-
+import Video from 'react-html5video';
 
 var ActivityPage = React.createClass({
 	contextTypes: {
 		router: React.PropTypes.object.isRequired
 	},
 	/*请求数据*/
-	getActivityData(){
+	getActivityData(_type){
 
 		let self = this;
 
 		$.ajax({
 	        dataType: 'json',
-	        url: 'http://hd.wecut.com/api/starlive/rank.php',
-	        success: function(data){
+            data: {id:1,type:_type},
+	        url: 'http://hd.wecut.com/api/starlive/list.php',
+	        success: function(res){
 
 	        		self.setState({
 	        			loading: false,
-	        			end_time: data.data.seconds,
-	        			source: data
+	        			source: res.data
 	        		})
 	                //处理data数据
         		}
 		});
 	},
     getInitialState: function () {
-    	let _startTime = moment().format('YYYY-MM-DD HH:mm:ss');
         return {
         	source: {},
-        	start_time: _startTime,
-        	end_time: '',
-        	loading: true
+            type: 2,
+        	loading: true,
+            mask: false,
+            videoPreImg: null,
+            videoUrl: null,
         };
     },
     componentDidMount: function () {
-       this.getActivityData();
+       this.getActivityData(2);
     },
-    viewHandle(tid){
-    	doGoTule(tid);
+    navHandle(type){
+        if(type=='new'){
+            this.setState({
+                type: 1
+            })
+            this.getActivityData(1);
+        }
+        if(type=='host'){
+            this.setState({
+                type: 2
+            })
+            this.getActivityData(2);
+        }
+    },
+    videoShow(videoSrc,videoPreImg){
+        this.setState({
+            mask: true,
+            videoUrl: videoSrc,
+            videoPreImg: videoPreImg
+        })
     },
 
     componentDidUpdate(){
 
     },
-
-     setBeginTime: function(){
-       return '2016-04-15 00:00:12';
-    },
-     // 准备期间 <div className="flashsale-countdown">剩余时间：<em>{this.state.flashsale.countdownText}</em> </div>
-    renderReady: function(){
-        return (
-            <div>
-                <CountDown 
-                	callback={this.setBeginTime} 
-                	data={{ startTime: this.state.start_time, endTime: this.state.end_time }}
-            	 	component={CountDownContent} 
-            	 />
-            </div>
-        );
+    maskHandle(){
+        this.setState({
+            mask: false
+        })
     },
 
     render: function () {
@@ -91,51 +77,83 @@ var ActivityPage = React.createClass({
     			)
     	}
     	let source = this.state.source;
-    	let star = source.data.star || [];
+        source.start = source.start || {};
+        let video = source.video || [];
     	console.log(source);
+        console.log(this.state.videoUrl);
+
+        let type = this.state.type;
         return (
             <div className="whole activity_page">
 		        <div className="p_r">
 		            <img className="activity_banner" src="images/logo.png" alt=""/>
-
-	            	{this.renderReady()}
-
+                    <div className="time_data">
+                        <p className="w-font-weight w-f-16">{source.star.name}</p>
+                        <p>已和 {source.star.copynum} 个人直播</p>
+                    </div>
 		        </div>
 		        <div className="activity_content first_content">
 		            <p className="activity_dec">
-		                如果你开直播，最想哪位欧巴来围观送花
+		                - 点击底部下载 WECUT    
 		            </p>
 		            <p className="activity_dec">
-		                - 选中心仪的欧巴，点击【黄色开拍按钮】
+		                - 打开WECUT，点击“欧巴来看我直播”封面
 		            </p>
 		            <p className="activity_dec">
-		                - 再点击左下角的【翻拍】
-		            </p>
-		            <p className="activity_dec">
-		                - 官方会挑选参与的优质用户，送出3台美图V4s手机！
+		                即可拍出你和Bigbang的直播小视频啦!
 		            </p>
 		        </div>
-		        <div className="activity_content">
-		        {
-		        	star.map(function(item,key){
-	        			return (
-	        				<div className='list' key={key}>
-				            	<div className="list_left">
-				            		<img className="list_img" src={item.image} alt="" />
-				            		<div className="list_dec">
-				            			<p className="large_title">{item.name}</p>
-				            			<p>围观：{item.copynum}</p>
-				            		</div>
-				            		<div className="view_icon" onClick={self.viewHandle.bind(null,item.tid)}></div>
-				            	</div>
-				            	<div className="list_right fr hidden">
-				            		<div className="share_icon "></div>
-				            	</div>
-				            </div>
-	        			)
-		        	})
-		        }
+		        <div className="">
+                    <div className="nav_section">
+                        <div className="fl nav_li" onClick={this.navHandle.bind(null,'new')}>
+                            <div className={type==1?"title active":"title"}>最新</div>
+                        </div>
+                        <div className="fr nav_li" onClick={this.navHandle.bind(null,'host')}>
+                            <div className={type==2?"title active":"title"}>最热</div>
+                        </div>
+                    </div>
 		        </div>
+                <div className="activity_content">
+                    <div className="img_section">
+                    {
+                        video.map(function(item,key){
+                            let _node = '';
+                            if(key==0&&type==2){
+                                _node = (
+                                    <div className="video_section" onClick={self.videoShow.bind(null,item.mediaurl,item.image)}>
+                                        <Video 
+                                            className="video_content" 
+                                            style={{width:'100%'}}
+                                            autoPlay  
+                                            poster={item.image}
+                                            >
+                                            <source src={item.mediaurl} type="video/mp4" />
+                                        </Video>
+                                    </div>
+                                )
+                            }else{
+                                _node = (
+                                    <img className="img_list" src={item.image} alt="" key={key} onClick={self.videoShow.bind(null,item.mediaurl,item.image)} />
+                                )
+                            }
+                            return _node
+                        })
+                    }
+                    </div>
+                </div>
+                <div className={this.state.mask?"mask shown":"mask hidden"} onClick={self.maskHandle}>
+                    <div className="mask_video">
+                        <Video 
+                            className="video_content" 
+                            style={{width:'100%'}}
+                            controls
+                            autoPlay  
+                            poster={this.state.videoPreImg}
+                            >
+                            <source src={this.state.videoUrl}  type="video/mp4" />
+                        </Video>
+                    </div>
+                </div>
 		    </div>
         );
     }

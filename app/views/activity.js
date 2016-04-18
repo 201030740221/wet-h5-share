@@ -26,7 +26,7 @@ var ActivityPage = React.createClass({
 
 		$.ajax({
 	        dataType: 'json',
-            data: {id:_id,type:_type},
+            data: {id:1,type:_type},
 	        url: 'http://hd.wecut.com/api/starlive/list.php',
 	        success: function(res){
 
@@ -75,30 +75,31 @@ var ActivityPage = React.createClass({
             this.getActivityData(2);
         }
     },
-    /*launchFullScreen(element) {
-      if(element.requestFullScreen) {
-        element.requestFullScreen();
-      } else if(element.mozRequestFullScreen) {
-        element.mozRequestFullScreen();
-      } else if(element.webkitRequestFullScreen) {
-        element.webkitRequestFullScreen();
-      }
-    },*/
+    query(selector){
+        return document.querySelector(selector);
+    },
     videoShow(videoSrc,videoPreImg){
+
+        let _video = this.query('.video__el');
+        if(_video){
+           _video.pause(); 
+        } 
+
         let self = this;
         this.setState({
             mask: true
         })
         let _width = document.body.clientWidth ;
         let _height = document.body.clientHeight; 
-        let _video_node = '<video class="video_content" controls="controls" autoplay="autoplay" width='+_width+'  height='+_height+'  poster='+videoPreImg+'><source src='+videoSrc+' type="video/mp4" /></video>';
+        let _video_node = '<video id="video_show" class="video_content" webkit-playsinline controls="controls" autoplay="autoplay" width='+_width+'  height='+_height+'  poster='+videoPreImg+'><source src='+videoSrc+' type="video/mp4" /></video>';
         $('#mask_video').append(_video_node);
 
-        let media = $('#mask_video Video');
-        console.log(media);
-        if(media.ended){
+        let media = this.query('#video_show');
+        media.play();
+        media.addEventListener('ended',function(){
+            console.log(88);
             self.maskHandle();
-        }
+        });
     },
 
     maskHandle(){
@@ -106,6 +107,10 @@ var ActivityPage = React.createClass({
             mask: false
         })
         $('#mask_video').empty();
+    },
+    componentDidUpdate(){
+        let _video = this.query('.video__el');
+        _video.play();
     },
 
     render: function () {
@@ -117,7 +122,7 @@ var ActivityPage = React.createClass({
     			)
     	}
     	let source = this.state.source || {};
-        source.start = source.start || {};
+        source.star = source.star || {};
         let video = source.video || [];
     	console.log(source);
         console.log(this.state.videoUrl);
@@ -144,7 +149,7 @@ var ActivityPage = React.createClass({
 		            </p>
 		        </div>
 		        <div className="">
-                    <div className="nav_section hidden">
+                    <div className="nav_section">
                         <div className="fl nav_li" onClick={this.navHandle.bind(null,'new')}>
                             <div className={type==1?"title active":"title"}>最新</div>
                         </div>
@@ -174,7 +179,7 @@ var ActivityPage = React.createClass({
                                 )
                             }else{
                                 _node = (
-                                    <img className="img_list hidden" src={item.image} alt="" key={key} onClick={self.videoShow.bind(null,item.mediaurl,item.image)} />
+                                    <img className="img_list" src={item.image} alt="" key={key} onClick={self.videoShow.bind(null,item.mediaurl,item.image)} />
                                 )
                             }
                             return _node

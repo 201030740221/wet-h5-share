@@ -9,6 +9,7 @@ module.exports = {
     inline: true,
     progress: true,
     contentBase: './app',
+    host: '192.168.2.38',
     port: 8002
   },
   entry: [
@@ -35,6 +36,6 @@ module.exports = {
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
-    new OpenBrowserPlugin({ url: 'http://localhost:8002' })
+    new OpenBrowserPlugin({ url: 'http://192.168.2.38:8002' })
   ]
 };

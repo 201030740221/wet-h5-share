@@ -1,5 +1,5 @@
 import {Router, Route, IndexRoute, useRouterHistory} from 'react-router';
-import Video from 'react-html5video';
+import { default as Video, Controls, Play, Mute, Seek, Fullscreen, Time, Overlay } from 'react-html5video';
 
 var ActivityPage = React.createClass({
 	contextTypes: {
@@ -22,11 +22,11 @@ var ActivityPage = React.createClass({
 
 		let self = this;
         let _id_data = this.GetRequest();
-        let _id = _id_data['id'];
+        let _id = _id_data['id'] || 1;
 
 		$.ajax({
 	        dataType: 'json',
-            data: {id:1,type:_type},
+            data: {id:_id,type:_type},
 	        url: 'http://hd.wecut.com/api/starlive/list.php',
 	        success: function(res){
 
@@ -74,39 +74,38 @@ var ActivityPage = React.createClass({
             this.getActivityData(2);
         }
     },
-    query(selector){
-        return document.querySelector(selector);
-    },
-    videoShow(videoSrc,videoPreImg){
 
-        let _video = this.query('.video__el');
-        if(_video){
-           _video.pause(); 
-        } 
+    videoList(videoData){
 
         let self = this;
-        $('#mask_box').show();
-    
-        let _width = document.body.clientWidth ;
-        let _height = document.body.clientHeight; 
-        let _video_node = '<video id="video_show" class="video_content" controls="controls" autoplay="autoplay" width='+_width+'  height='+_height+' webkit-playsinline poster='+videoPreImg+'><source src='+videoSrc+' type="video/mp4" /></video>';
-        $('#mask_video').append(_video_node);
-
-        let media = this.query('#video_show');
-        media.play();
-        media.addEventListener('ended',function(){
-            console.log(88);
-            self.maskHandle();
-        });
-    },
-
-    maskHandle(){
-        $('#mask_box').hide();
-        $('#mask_video').empty();
+        let _node = videoData.map(function(item,key){
+            return (
+                    <div className="video_section">
+                        <video width="100%"  controls="controls" poster={item.image}>
+                          <source src={item.mediaurl} type="video/mp4" />
+                        </video>
+                        <div className={self.state.botton_icon?"video_btn":"video_btn"}></div>
+                    </div>
+                )
+        })
+        return _node;
     },
     componentDidUpdate(){
-        let _video = this.query('.video__el');
-        _video.play();
+        /*$('.video_btn').click(function(){
+
+            var _this = this;
+            var _video = $(this).siblings('video');
+            _video[0].play();
+            $(this).hide();
+
+            _video[0].addEventListener("click",function(){  
+                
+                console.log(99);  
+            });  
+            _video[0].addEventListener("ended",function(){  
+                $(_this).show();
+            });  
+        })*/
     },
 
     render: function () {
@@ -155,42 +154,8 @@ var ActivityPage = React.createClass({
                     </div>
 		        </div>
                 <div className="activity_content">
-                    <div className="img_section">
-                    {
-                        video.map(function(item,key){
-                            let _node = '';
-                            if(key==0&&type==2){
-                                _node = (
-                                    <div className="video_section" onClick={self.videoShow.bind(null,item.mediaurl,item.image)}>
-                                        <Video 
-                                            className="video_content" 
-                                            style={{width:'100%'}}
-                                            autoPlay  
-                                            poster={item.image}
-                                            >
-                                            <source src={item.mediaurl} type="video/mp4" />
-                                        </Video>
-                                        <div className={self.state.botton_icon?"play_btn":""}></div>
-                                    </div>
-                                )
-                            }else{
-                                if(item.image){
-                                     _node = (
-                                        <img className="img_list" src={item.image} alt="" key={key} onClick={self.videoShow.bind(null,item.mediaurl,item.image)} />
-                                    )
-                                }else{
-                                    _node = null;
-                                }
-                               
-                            }
-                            return _node
-                        })
-                    }
-                    </div>
-                </div>
-                <div id="mask_box" className="mask" onClick={self.maskHandle}>
-                    <div id="mask_video" className="mask_video">
-                       
+                    <div id="video_list" className="img_section video_section">
+                        {this.videoList(video)}
                     </div>
                 </div>
 		    </div>

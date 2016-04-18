@@ -43,7 +43,6 @@ var ActivityPage = React.createClass({
         	source: {},
             type: 2,
         	loading: true,
-            mask: false,
             videoPreImg: null,
             videoUrl: null,
             botton_icon: false
@@ -86,9 +85,8 @@ var ActivityPage = React.createClass({
         } 
 
         let self = this;
-        this.setState({
-            mask: true
-        })
+        $('#mask_box').show();
+    
         let _width = document.body.clientWidth ;
         let _height = document.body.clientHeight; 
         let _video_node = '<video id="video_show" class="video_content" webkit-playsinline controls="controls" autoplay="autoplay" width='+_width+'  height='+_height+'  poster='+videoPreImg+'><source src='+videoSrc+' type="video/mp4" /></video>';
@@ -103,9 +101,7 @@ var ActivityPage = React.createClass({
     },
 
     maskHandle(){
-        this.setState({
-            mask: false
-        })
+        $('#mask_box').hide();
         $('#mask_video').empty();
     },
     componentDidUpdate(){
@@ -174,20 +170,25 @@ var ActivityPage = React.createClass({
                                             >
                                             <source src={item.mediaurl} type="video/mp4" />
                                         </Video>
-
+                                        <div className="play_btn"></div>
                                     </div>
                                 )
                             }else{
-                                _node = (
-                                    <img className="img_list" src={item.image} alt="" key={key} onClick={self.videoShow.bind(null,item.mediaurl,item.image)} />
-                                )
+                                if(item.image){
+                                     _node = (
+                                        <img className="img_list" src={item.image} alt="" key={key} onClick={self.videoShow.bind(null,item.mediaurl,item.image)} />
+                                    )
+                                }else{
+                                    _node = null;
+                                }
+                               
                             }
                             return _node
                         })
                     }
                     </div>
                 </div>
-                <div id="mask_box" className={this.state.mask?"mask shown":"mask hidden"} onClick={self.maskHandle}>
+                <div id="mask_box" className="mask" onClick={self.maskHandle}>
                     <div id="mask_video" className="mask_video">
                        
                     </div>

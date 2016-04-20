@@ -18,7 +18,7 @@ var ActivityPage = React.createClass({
         return theRequest; 
     },
 	/*请求数据*/
-	getActivityData(_type,current_page){
+	getActivityData(_type){
 
 		let self = this;
         let _id_data = this.GetRequest();
@@ -28,9 +28,7 @@ var ActivityPage = React.createClass({
 	        dataType: 'json',
             data: {
                     id:_id,
-                    type:_type,
-                    page: current_page,
-                    count: 10
+                    type:_type
                 },
 	        url: 'http://hd.wecut.com/api/starlive/list.php',
 	        success: function(res){
@@ -56,9 +54,11 @@ var ActivityPage = React.createClass({
     getWechatConfig(){
 
         let self = this;
+        let _url = window.location.href;
         $.ajax({
+            type: 'POST',
             dataType: 'json',
-            data: {},
+            data: {url:_url},
             url: 'http://hd.wecut.com/api/wx/token.php',
             success: function(res){
                 self.wechatConfig(res.data);
@@ -72,7 +72,7 @@ var ActivityPage = React.createClass({
           console.log(configData,'weChatJsConfig');
           var apiList = ['onMenuShareTimeline', 'onMenuShareAppMessage'];
            wx.config({
-                debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+                debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
                 appId:  configData.appId, // 必填，公众号的唯一标识
                 timestamp: configData.timestamp, // 必填，生成签名的时间戳
                 nonceStr: configData.nonceStr, // 必填，生成签名的随机串
@@ -85,7 +85,7 @@ var ActivityPage = React.createClass({
                 success: function(res) {
                     // 以键值对的形式返回，可用的api值true，不可用为false
                     // 如：{"checkResult":{"chooseImage":true},"errMsg":"checkJsApi:ok"}
-                    console.log(res);
+                    console.log(res,'wx');
                 }
             });
 
@@ -123,8 +123,6 @@ var ActivityPage = React.createClass({
 
     getInitialState: function () {
 
-        this.getWechatConfig();//微信配置接口
-
         return {
         	source: {},
             videoArr: [],
@@ -138,7 +136,8 @@ var ActivityPage = React.createClass({
         };
     },
     componentDidMount: function () {
-       this.getActivityData(this.state.type,this.state.page);
+
+       this.getActivityData(this.state.type);
        if(platform() == 'iOS'){
             this.setState({
                 botton_icon: false
@@ -148,6 +147,9 @@ var ActivityPage = React.createClass({
                 botton_icon: true
             })
         }
+
+        this.getWechatConfig();//微信配置接口
+
     },
     navHandle(type){
         if(type=='new'){
@@ -172,7 +174,6 @@ var ActivityPage = React.createClass({
                         <video width="100%"  controls="controls" poster={item.image}>
                           <source src={item.mediaurl} type="video/mp4" />
                         </video>
-                        <div className={self.state.botton_icon?"video_btn":"video_btn"}></div>
                     </div>
                 )
         })
@@ -206,7 +207,7 @@ var ActivityPage = React.createClass({
     pushLoad(){
         let _type = this.state.type;
         let _page = this.state.page;
-        this.getActivityData(_type,_page);/*滚动刷新数据*/
+        this.getActivityData(_type);/*滚动刷新数据*/
     },
         
     render: function () {
@@ -226,7 +227,9 @@ var ActivityPage = React.createClass({
         return (
             <div className="whole activity_page">
 		        <div className="p_r">
-		            <img className="activity_banner" src="images/logo.png" alt=""/>
+                    <div className="activity_banner">
+                        <img src="images/logo_review.png" alt=""/>
+                    </div>
                     <div className="time_data">
                         <p className="w-font-weight w-f-16">{source.star.name}</p>
                         <p>已和 {source.star.copynum} 个人直播</p>
@@ -254,16 +257,12 @@ var ActivityPage = React.createClass({
                     </div>
 		        </div>
                 <div className="activity_content">
-                     <PagePushContent 
-                        onPushRefresh={this.pushLoad} 
-                        canRefresh={this.canRefresh}
-                       
-                        islast={this.state.islast}
-                        >
-                        <div id="video_list" className="img_section video_section">
-                            {this.videoList(video)}
-                        </div>
-                    </PagePushContent>
+                    <div id="video_list" className="img_section video_section">
+                        {this.videoList(video)}
+                    </div>
+                </div>
+                <div className="footer_section">
+                    <p><i></i>点击下载WECUT，和Bigbang视频聊天</p>
                 </div>
 		    </div>
         );

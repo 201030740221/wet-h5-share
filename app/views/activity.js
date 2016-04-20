@@ -72,7 +72,7 @@ var ActivityPage = React.createClass({
           console.log(configData,'weChatJsConfig');
           var apiList = ['onMenuShareTimeline', 'onMenuShareAppMessage'];
            wx.config({
-                debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+                debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
                 appId:  configData.appId, // 必填，公众号的唯一标识
                 timestamp: configData.timestamp, // 必填，生成签名的时间戳
                 nonceStr: configData.nonceStr, // 必填，生成签名的随机串
@@ -89,10 +89,8 @@ var ActivityPage = React.createClass({
                 }
             });
 
-            let title='';
-            
-            
-            var link = '',
+            let title='分享赢iphone',
+                link = 'www.wecut.com',
                 image = '';
 
             wx.onMenuShareTimeline({
@@ -109,7 +107,7 @@ var ActivityPage = React.createClass({
 
             wx.onMenuShareAppMessage({
                 title: title, // 分享标题
-                desc: '自定义的分享描述', // 分享描述
+                desc: 'wecut', // 分享描述
                 link: link, // 分享链接
                 imgUrl: image, // 分享图标
                 type: 'link', // 分享类型,music、video或link，不填默认为link
@@ -170,7 +168,7 @@ var ActivityPage = React.createClass({
         let self = this;
         let _node = videoData.map(function(item,key){
             return (
-                    <div className="video_section">
+                    <div className="video_section" key={key}>
                         <video width="100%"  controls="controls" poster={item.image}>
                           <source src={item.mediaurl} type="video/mp4" />
                         </video>

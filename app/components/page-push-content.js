@@ -34,7 +34,7 @@ var View = React.createClass({
   },
   init: function() {
     this.page = React.findDOMNode(this);
-    this.maxH = 100;
+    this.maxH = 50;
   },
   offEvt: function() {
     Events.off(this.page, 'scroll', this.scroll);

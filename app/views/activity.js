@@ -1,5 +1,6 @@
 import {Router, Route, IndexRoute, useRouterHistory} from 'react-router';
-import PagePushContent from '../components/page-push-content';
+/*import PagePushContent from '../components/page-push-content';*/
+import Ua from '../components/utils/ua';
 
 var ActivityPage = React.createClass({
 	contextTypes: {
@@ -72,7 +73,7 @@ var ActivityPage = React.createClass({
           console.log(configData,'weChatJsConfig');
           var apiList = ['onMenuShareTimeline', 'onMenuShareAppMessage'];
            wx.config({
-                debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+                debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
                 appId:  configData.appId, // 必填，公众号的唯一标识
                 timestamp: configData.timestamp, // 必填，生成签名的时间戳
                 nonceStr: configData.nonceStr, // 必填，生成签名的随机串
@@ -151,6 +152,8 @@ var ActivityPage = React.createClass({
         this.getWechatConfig();//微信配置接口
 
     },
+
+    /*tab*/
     navHandle(type){
         if(type=='new'){
             this.setState({
@@ -166,21 +169,25 @@ var ActivityPage = React.createClass({
         }
     },
 
+    /*video*/
     videoList(videoData){
         let self = this;
         let _node = videoData.map(function(item,key){
             return (
                     <div className="video_section" key={key}>
-                        <video width="100%"  controls="controls" poster={item.image}>
+                        <video width="100%"  poster={item.image}>
                           <source src={item.mediaurl} type="video/mp4" />
                         </video>
+                        <div className="play_btn" onClick={self.VideoStatus}></div>
                     </div>
                 )
         })
         return _node;
     },
     componentDidUpdate(){
-       /* $('.video_btn').click(function(){
+
+        /*兼容安卓部分机型不能播放*/
+        $('.play_btn').click(function(){
 
             var _this = this;
             var _video = $(this).siblings('video');
@@ -194,7 +201,12 @@ var ActivityPage = React.createClass({
             _video[0].addEventListener("ended",function(){  
                 $(_this).show();
             });  
-        })*/
+        })
+
+        /*兼容ios position fixed 问题*/
+        $(window).scroll(function(){ 
+            $("#foot_nav").css({top: window.innerHeight + window.scrollY - $("#foot_nav").outerHeight() }); 
+        }); 
     },
     canRefresh(){
        /* pageager = this.state.pager
@@ -208,6 +220,17 @@ var ActivityPage = React.createClass({
         let _type = this.state.type;
         let _page = this.state.page;
         this.getActivityData(_type);/*滚动刷新数据*/
+    },
+
+    /*download url*/
+    link(){
+        let _ua = Ua.suitUa();
+        console.log(_ua[0]);
+        if(_ua[0]=='Weibo'){
+            window.location.href = 'http://t.cn/RGqa1jS';
+        }else{
+            window.location.href = 'http://a.app.qq.com/o/simple.jsp?pkgname=com.hithway.wecut';
+        }
     },
         
     render: function () {
@@ -232,18 +255,18 @@ var ActivityPage = React.createClass({
                     </div>
                     <div className="time_data">
                         <p className="w-font-weight w-f-16">{source.star.name}</p>
-                        <p>已和 {source.star.copynum} 个人直播</p>
+                        <p>已和 {source.star.copynum} 个人视频聊天</p>
                     </div>
 		        </div>
 		        <div className="activity_content first_content">
 		            <p className="activity_dec">
-		                - 点击底部下载 WECUT    
+		                - 点击底部下载 WECUT     
 		            </p>
 		            <p className="activity_dec">
-		                - 打开WECUT，点击“欧巴来看我直播”封面
+		                - 打开WECUT，点击“我的欧巴最会撩”封面
 		            </p>
 		            <p className="activity_dec">
-		                即可拍出你和   {source.star.name}  的直播小视频啦!
+		                即可拍出和   {source.star.name}  的视频聊天啦!
 		            </p>
 		        </div>
 		        <div className="">
@@ -261,8 +284,8 @@ var ActivityPage = React.createClass({
                         {this.videoList(video)}
                     </div>
                 </div>
-                <div className="footer_section">
-                    <p><i></i>点击下载WECUT，和Bigbang视频聊天</p>
+                <div id="foot_nav" className="footer_section" onClick={this.link}>
+                    <p><i></i><span className="footer_dec">点击下载WECUT，和 {source.star.name} 视频聊天</span></p>
                 </div>
 		    </div>
         );
